@@ -26,6 +26,11 @@ import io
 import itertools
 import sys
 
+try:  # В новых версиях Python
+    collectionsAbc = collections.abc  # collections.Iterable -> collections.abc.Iterable
+except AttributeError:  # Для старых версий Python
+    collectionsAbc = collections  # Используем collections.Iterable
+
 import backtrader as bt
 from backtrader.utils.py3 import (map, with_metaclass, string_types,
                                   integer_types)
@@ -205,7 +210,7 @@ class WriterFile(WriterBase):
                     self.writelineseparator(level=level)
                 self.writeline(kline)
                 self.writedict(val, level=level + 1, recurse=True)
-            elif isinstance(val, (list, tuple, collections.Iterable)):
+            elif isinstance(val, (list, tuple, collectionsAbc.Iterable)):  # Для разных версий Python будут вызываться разные функции
                 line = ', '.join(map(str, val))
                 self.writeline(kline + ' ' + line)
             else:
